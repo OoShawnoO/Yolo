@@ -20,6 +20,10 @@ cd Yolo && mkdir build && cd build
 cmake ..
 ```
 
+Copy libYolo.so to your project lib.
+
+Copy Yolo.h to your project include.
+
 Write a CmakeLists.txt for your own project.
 ```cmake
 set(ONNX_PATH your's onnxruntime dir path)
