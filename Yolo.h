@@ -182,8 +182,8 @@ namespace hzd {
                 bool scaleUp = true,
                 int stride = 32
         ) const;
-        void scalecoords(const cv::Size& originalSize,cv::Rect& coords) const;
-        void scalecoords(const cv::Size& originalSize,cv::Point& point) const;
+        void scaleCoords(const cv::Size& originalSize, cv::Rect& coords) const;
+        void scaleCoords(const cv::Size& originalSize, cv::Point& point) const;
     };
 
 } // hzd

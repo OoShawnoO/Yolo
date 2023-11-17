@@ -8,7 +8,7 @@ namespace hzd {
     pose.position.x = (int)kps[pose_x_offset + k * 3 * anchorsCount + i]; \
     pose.position.y = (int)kps[pose_y_offset + k * 3 * anchorsCount + i]; \
     pose.vision = kps[pose_value_offset + k * 3 * anchorsCount + i];      \
-    scalecoords({frame.cols,frame.rows},pose.position);                   \
+    scaleCoords({frame.cols,frame.rows},pose.position);                   \
 }while(0)
 
 #define POSE_PAINT(pose,mat,index) do {                                                 \
@@ -175,7 +175,7 @@ namespace hzd {
                         float confidence = clsConf * objConf;
 
                         cv::Rect rect{left,top,_width,_height};
-                        scalecoords({frame.cols,frame.rows},rect);
+                        scaleCoords({frame.cols, frame.rows}, rect);
 
                         boxes.emplace_back(rect);
                         confs.emplace_back(confidence);
@@ -220,7 +220,7 @@ namespace hzd {
 
 
                         cv::Rect rect{left,top,_width,_height};
-                        scalecoords({frame.cols,frame.rows},rect);
+                        scaleCoords({frame.cols, frame.rows}, rect);
                         boxes.emplace_back(rect);
                     }
                     data += signalResultNum;
@@ -292,7 +292,7 @@ namespace hzd {
                         person.box.y = (int)(raw[y_offset + i] - raw[height_offset + i] / 2);
                         person.box.width = (int)raw[width_offset + i];
                         person.box.height = (int)raw[height_offset + i];
-                        scalecoords({frame.cols,frame.rows},person.box);
+                        scaleCoords({frame.cols, frame.rows}, person.box);
                         auto kps = raw + pose_offset;
                         for(int k = 0;k < 17;k++){
                             switch (k) {
@@ -389,7 +389,7 @@ namespace hzd {
         cv::copyMakeBorder(outImage, outImage, top, bottom, left, right, cv::BORDER_CONSTANT, color);
     }
 
-    void Yolo::scalecoords(const cv::Size& originalSize, cv::Rect &coords) const {
+    void Yolo::scaleCoords(const cv::Size& originalSize, cv::Rect &coords) const {
         float gain = std::min((float)size.height / (float)originalSize.height,
                               (float)size.width / (float)originalSize.width);
 
@@ -403,7 +403,7 @@ namespace hzd {
         coords.height = (int) std::round(((float)coords.height / gain));
     }
 
-    void Yolo::scalecoords(const cv::Size& originalSize, cv::Point &coords) const {
+    void Yolo::scaleCoords(const cv::Size& originalSize, cv::Point &coords) const {
         float gain = std::min((float)size.height / (float)originalSize.height,
                               (float)size.width / (float)originalSize.width);
         int pad[2] = {(int) (( (float)size.width - (float)originalSize.width * gain) / 2.0f),
