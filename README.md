@@ -1,6 +1,7 @@
 # Yolo
 using ONNXRuntime to inference yolov5 / yolov8 ( detect / pose ) model in C++
 
+使用ONNXRuntime 推理yolov5/yolov8的detect/pose模型。
 ## Dependencies
 - *OpenCV* [REQUIRED]
 - *onnxruntime* [REQUIRED]
@@ -10,11 +11,18 @@ using ONNXRuntime to inference yolov5 / yolov8 ( detect / pose ) model in C++
 ## Cmake
 How to build your project with Yolo?
 
+如何在自己的项目中使用Yolo?
+
 In order to avoid *Binary compatibility issues*,suggest you to compile dynamic link library by yourself.
+
+为了避免二进制兼容性问题，建议您自己在电脑上编译动态链接库。
+
 ```shell
 git clone https://github.com/OoShawnoO/Yolo.git
 ```
 modify ONNX_PATH in CMakeLists.txt with your onnxruntime dir path.
+
+更新CMakeLists.txt中ONNX_PATH宏为您的onnxruntime文件夹路径
 ```shell
 cd Yolo && mkdir build && cd build
 cmake ..
@@ -22,9 +30,15 @@ cmake ..
 
 Copy libYolo.so to your project lib.
 
+将libYolo.so复制到您的项目lib文件夹下。
+
 Copy Yolo.h to your project include.
 
+将Yolo.h复制到您的项目include文件夹下。
+
 Write a CmakeLists.txt for your own project.
+
+为您的项目编写一个CMakeLists.txt文件。
 ```cmake
 set(ONNX_PATH your's onnxruntime dir path)
 

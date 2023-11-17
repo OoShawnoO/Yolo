@@ -11,6 +11,7 @@ include_directories(${OpenCV_INCLUDES})
 include_directories(${ONNX_PATH}/include)
 link_directories(${ONNX_PATH}/lib)
 
-add_library(${TARGET} SHARED Yolo.h Yolo.cpp)
+#add_library(${TARGET} SHARED Yolo.h Yolo.cpp)
+add_executable(${TARGET} main.cpp Yolo.cpp)
 
 target_link_libraries(${TARGET} ${OpenCV_LIBS} onnxruntime)

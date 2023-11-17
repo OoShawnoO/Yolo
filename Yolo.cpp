@@ -11,16 +11,16 @@ namespace hzd {
     scalecoords({frame.cols,frame.rows},pose.position);                   \
 }while(0)
 
-#define POSE_PAINT(pose,mat,index) do { \
-    if(pose.vision > 0.5) {                                                 \
-        cv::circle(mat,pose.position,5,colorScheme.at(index),-1,cv::LINE_AA);  \
+#define POSE_PAINT(pose,mat,index) do {                                                 \
+    if(pose.vision > confThreshold) {                                                   \
+        cv::circle(mat,pose.position,5,colorScheme.at(index),-1,cv::LINE_AA);           \
     }\
 }while(0)
 
-#define POSE_LINE(pose1,pose2,mat) do { \
-    if(pose1.vision > 0.5 && pose2.vision > 0.5){                                    \
-        cv::line(mat,pose1.position,pose2.position,cv::Scalar{72,118,255},1,cv::LINE_AA);  \
-    }\
+#define POSE_LINE(pose1,pose2,mat) do {                                                     \
+    if(pose1.vision > confThreshold && pose2.vision > confThreshold){                       \
+        cv::line(mat,pose1.position,pose2.position,cv::Scalar{72,118,255},3,cv::LINE_AA);   \
+    }                                                                                       \
 }while(0)
 
     Ort::Env Yolo::env;
@@ -215,8 +215,8 @@ namespace hzd {
 
                         int left = int(x-0.5 * w);
                         int top = int(y-0.5 * h);
-                        int _width = w;
-                        int _height = h;
+                        int _width = (int)w;
+                        int _height = (int)h;
 
 
                         cv::Rect rect{left,top,_width,_height};
@@ -434,9 +434,9 @@ namespace hzd {
             }
 
             int baseline = 0;
-            cv::Size size = cv::getTextSize(label, cv::FONT_ITALIC, 0.8, 2, &baseline);
+            cv::Size textSize = cv::getTextSize(label, cv::FONT_ITALIC, 0.8, 2, &baseline);
             cv::rectangle(frame,
-                          cv::Point(x, y - 25), cv::Point(x + size.width, y),
+                          cv::Point(x, y - 25), cv::Point(x + textSize.width, y),
                           scalar, -1);
 
             cv::putText(frame, label,

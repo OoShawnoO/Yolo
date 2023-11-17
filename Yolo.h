@@ -5,18 +5,18 @@
 #include <opencv2/imgproc.hpp>
 
 namespace hzd {
-
+    // 推理目标  / Detection
     struct Detection {
         cv::Rect    box{};
         float       conf{};
         int         classId{};
     };
-
+    // 身体部位 / Body Part
     struct BodyPart {
         cv::Point   position;
         float       vision;
     };
-
+    // 人体 / Person
     struct Person : Detection {
         // 鼻子 / nose
         BodyPart    nose{};
@@ -57,33 +57,50 @@ namespace hzd {
     class Yolo {
     public:
         using DeviceID = int;
-        enum YoloVersion { DetectV8,PoseV8,DetectV5,PoseV5 };
+        enum YoloVersion {
+            // yolo v8 Detect版本
+            DetectV8,
+            // yolo v8 Pose 版本
+            PoseV8,
+            // yolo v5 Detect 版本
+            DetectV5,
+            // yolo v5 Pose 版本
+            PoseV5
+        };
 
         Yolo() = default;
         explicit Yolo(nullptr_t){};
         
         Yolo
         (
+                // 权重文件路径 / Weight file path
                 const std::string&      weightFilePath,
+                // Yolo 版本 / Yolo version
                 YoloVersion             version,
+                // 推理图像大小 / Detect image size
                 cv::Size                size = {640,640},
+                // 是否使用CUDA加速 / Using CUDA or not
                 bool                    cuda = true,
+                // 使用的设备ID / Device ID
                 DeviceID                deviceId = 0,
+                // 置信度 / Confidence
                 float                   confThreshold = 0.5,
+                // IOU阈值 / IOU threshold
                 float                   iouThreshold = 0.4
         );
 
         ~Yolo();
-
+        // 推理 / Detect
         bool Detect(
                 const cv::Mat&          frame,
                 std::vector<Detection>& result
         );
+        // 姿态检测 / Pose detect
         bool Pose(
                 const cv::Mat&          frame,
                 std::vector<Person>&    result
         );
-
+        // 绘制推理结果 / Paint Detections
         void PaintDetections(
                 cv::Mat&                                    frame,
                 const std::vector<Detection>&               detections,
@@ -107,7 +124,7 @@ namespace hzd {
                         {16,cv::Scalar{144,238,144}}
                 }
         );
-
+        // 绘制人体姿态 / Paint Person Pose
         void PaintPersons(
                 cv::Mat&                                    frame,
                 const std::vector<Person>&                  person,
@@ -134,7 +151,7 @@ namespace hzd {
 
     private:
         static Ort::Env             env;
-        YoloVersion                 version;
+        YoloVersion                 version{DetectV8};
         Ort::SessionOptions         sessionOptions;
         Ort::Session                session = Ort::Session(nullptr);
         Ort::RunOptions             runOptions;
