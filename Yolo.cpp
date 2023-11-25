@@ -488,4 +488,50 @@ namespace hzd {
         }
     }
 
+    bool Yolo::Reload(
+            const std::string &weightFilePath,
+            Yolo::YoloVersion version,
+            cv::Size size,
+            bool cuda,
+            Yolo::DeviceID deviceId,
+            float confThreshold,
+            float iouThreshold
+    )
+    {
+        session.release();
+        Ort::AllocatorWithDefaultOptions allocator;
+        if(cuda && OrtSessionOptionsAppendExecutionProvider_CUDA(sessionOptions,deviceId)) {
+            std::cerr << "[ WARN ] using cuda failed!" << std::endl;
+        }
+        sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+        session = Ort::Session{env,weightFilePath.c_str(),sessionOptions};
+
+        inputClasses.resize(session.GetInputCount());
+        for(int i=0;i<inputClasses.size();i++){
+            inputClasses[i] = new char[strlen(session.GetInputNameAllocated(i,allocator).get()) + 1];
+            strcpy(inputClasses[i],session.GetInputNameAllocated(i,allocator).get());
+        }
+        outputClasses.resize(session.GetOutputCount());
+        for(int i=0;i<outputClasses.size();i++){
+            outputClasses[i] = new char[strlen(session.GetOutputNameAllocated(i,allocator).get()) + 1];
+            strcpy(outputClasses[i],session.GetOutputNameAllocated(i,allocator).get());
+        }
+
+        width = (int)session.GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape()[2];
+        height = (int)session.GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape()[3];
+        channel = (int)session.GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape()[1];
+
+        inputDims = session.GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape();
+        outputDims = session.GetOutputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape();
+
+        std::string names = session.GetModelMetadata().LookupCustomMetadataMapAllocated("names",allocator).get();
+        auto pos = names.find('\'');
+        while(pos != std::string::npos) {
+            auto newPos = names.find('\'',pos + 1);
+            outputNames.emplace_back(names.substr(pos + 1,newPos - pos -1));
+            pos = names.find('\'',newPos + 1);
+        }
+        return false;
+    }
+
 } // hzd

@@ -90,6 +90,23 @@ namespace hzd {
         );
 
         ~Yolo();
+
+        // 切换模型 / Change weight file
+        bool Reload(// 权重文件路径 / Weight file path
+                const std::string&      weightFilePath,
+                // Yolo 版本 / Yolo version
+                YoloVersion             version,
+                // 推理图像大小 / Detect image size
+                cv::Size                size = {640,640},
+                // 是否使用CUDA加速 / Using CUDA or not
+                bool                    cuda = true,
+                // 使用的设备ID / Device ID
+                DeviceID                deviceId = 0,
+                // 置信度 / Confidence
+                float                   confThreshold = 0.5,
+                // IOU阈值 / IOU threshold
+                float                   iouThreshold = 0.4
+        );
         // 推理 / Detect
         bool Detect(
                 const cv::Mat&          frame,
